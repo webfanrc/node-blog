@@ -6,7 +6,7 @@ http.createServer(function(request, response) {
   var pathname = url.parse(request.url).pathname;
   var arg = url.parse(request.url, true).query;
   console.log('pathname:' + pathname);
-  console.log('arg:' + JSON.stringify(arg));
+  // console.log('arg:' + JSON.stringify(arg));
 
   response.setHeader("Access-Control-Allow-Origin","http://localhost:8081");
   response.setHeader("Access-Control-Allow-Headers","Content-Type");
@@ -29,7 +29,7 @@ http.createServer(function(request, response) {
       response.end();
     });
 
-  } else if (pathname = "/blog_detail") {
+  } else if (pathname = "/blog/detail") {
     var title = arg.title;
     var sql = `select * from blog where title = '${title}'`;
     console.log(sql);
