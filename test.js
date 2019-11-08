@@ -1,6 +1,7 @@
 var http = require("http");
 var url = require("url");
 var mysql = require('mysql');
+const os = require('os');
 
 http.createServer(function(request, response) {
   var pathname = url.parse(request.url).pathname;
@@ -22,12 +23,24 @@ http.createServer(function(request, response) {
 
   if (pathname == "/blog") {
 
+    let yourOS = os.platform();
+    let yourHost = os.hostname();
+    let yourIP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+
+    console.log(yourOS, yourHost, yourIP);
+
     var sql = 'select * from blog order by create_date DESC';
-    connection.query(sql, function(error, results) {
+    connection.query(sql, function(error, res) {
+      let results = {};
+      results.blogList = res;
+      results.yourOS = yourOS;
+      results.yourHost = yourHost;
+      results.yourIP = yourIP;
       console.log(results);
       response.write(JSON.stringify(results));
       response.end();
     });
+
 
   } else if (pathname = "/blog/detail") {
     var title = arg.title;
