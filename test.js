@@ -1,15 +1,19 @@
-var http = require("http");
-var url = require("url");
-var mysql = require('mysql');
+const http = require("http");
+const url = require("url");
+const mysql = require('mysql');
 const os = require('os');
+const _request = require('request');
 
 http.createServer(function(request, response) {
   var pathname = url.parse(request.url).pathname;
   var arg = url.parse(request.url, true).query;
-  console.log('pathname:' + pathname);
-  // console.log('arg:' + JSON.stringify(arg));
+  console.log('pathname: ' + pathname);
 
-  response.setHeader("Access-Control-Allow-Origin","http://localhost:8081");
+  console.log('remoteAddress: ' + request.connection.remoteAddress);
+  console.log('x-forwarded-for: ' + request.headers['x-forwarded-for']);
+  console.log('x-real-ip: ' + request.headers['x-real-ip'] + '\n');
+
+  response.setHeader("Access-Control-Allow-Origin","http://localhost:8081"); // 方便本地调试
   response.setHeader("Access-Control-Allow-Headers","Content-Type");
   response.writeHead(200, {'Content-Type': 'text/plain'});
 
@@ -29,26 +33,37 @@ http.createServer(function(request, response) {
 
     console.log(yourOS, yourHost, yourIP);
 
-    var sql = 'select * from blog order by create_date DESC';
+    let sql = 'select * from blog order by create_date DESC';
     connection.query(sql, function(error, res) {
       let results = {};
       results.blogList = res;
+
       results.yourOS = yourOS;
       results.yourHost = yourHost;
       results.yourIP = yourIP;
-      console.log(results);
+
       response.write(JSON.stringify(results));
       response.end();
     });
-
-
-  } else if (pathname = "/blog/detail") {
+  } else if (pathname == "/blog/detail") {
     var title = arg.title;
     var sql = `select * from blog where title = '${title}'`;
-    console.log(sql);
     connection.query(sql, function(error, results) {
-      console.log(results);
+      console.log('results of /blog/detail: ' + results);
       response.write(JSON.stringify(results));
+      response.end();
+    });
+  } else if (pathname == "/sendMessage") {
+    let user_name = arg.user_name;
+    let user_email = arg.user_email;
+    let user_message = arg.user_message;
+    let sql = `insert into message(user_name, user_email, user_message) values('${user_name}', '${user_email}', '${user_message}')`;
+
+    connection.query(sql, function(error, results) {
+      console.log('results of /sendMessage: ' + results);
+      if (typeof results != 'undefined') {
+        response.write(JSON.stringify(results));
+      }
       response.end();
     });
   }
