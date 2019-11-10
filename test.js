@@ -24,7 +24,7 @@ http.createServer(function(request, response) {
   });
   connection.connect();
 
-  if (pathname == "/blog") {
+  if (pathname == "/blog/") {
 
     let yourOS = os.platform();
     let yourHost = os.hostname();
@@ -54,7 +54,7 @@ http.createServer(function(request, response) {
       response.write(JSON.stringify(results));
       response.end();
     });
-  } else if (pathname == "/sendMessage") {
+  } else if (pathname == "/blog/sendMessage") {
     let user_name = arg.user_name;
     let user_email = arg.user_email;
     let user_message = arg.user_message;
@@ -67,7 +67,7 @@ http.createServer(function(request, response) {
       }
       response.end();
     });
-  } else if (pathname == "/ipAddress") {
+  } else if (pathname == "/blog/ipAddress") {
     let user_ip = arg.user_ip;
     let view_title = arg.view_title;
     let view_date = new Date();
@@ -82,7 +82,7 @@ http.createServer(function(request, response) {
       }
       response.end();
     })
-  } else if (pathname == "/getUserIP") {
+  } else if (pathname == "/blog/getUserIP") {
     let sql = 'select * from ip order by view_date DESC';
     connection.query(sql, function(error, res) {
       let results = {};
