@@ -42,7 +42,9 @@ http.createServer(function(request, response) {
       results.yourHost = yourHost;
       results.yourIP = yourIP;
 
-      response.write(JSON.stringify(results));
+      if (typeof res != 'undefined') {
+        response.write(JSON.stringify(results));
+      }
       response.end();
     });
   } else if (pathname == "/blog/detail") {
@@ -62,6 +64,31 @@ http.createServer(function(request, response) {
     connection.query(sql, function(error, results) {
       console.log('results of /sendMessage: ' + results);
       if (typeof results != 'undefined') {
+        response.write(JSON.stringify(results));
+      }
+      response.end();
+    });
+  } else if (pathname == "/ipAddress") {
+    let user_ip = arg.user_ip;
+    let view_title = arg.view_title;
+    let view_date = new Date();
+
+    connection.query('INSERT INTO ip SET ?', {
+      user_ip: user_ip,
+      view_title: view_title,
+      view_date: view_date,
+    }, function(error, results) {
+      if (typeof results != undefined) {
+        response.write(JSON.stringify(results));
+      }
+      response.end();
+    })
+  } else if (pathname == "/getUserIP") {
+    let sql = 'select * from ip order by view_date DESC';
+    connection.query(sql, function(error, res) {
+      let results = {};
+      results.ipList = res;
+      if (typeof res != 'undefined') {
         response.write(JSON.stringify(results));
       }
       response.end();
