@@ -2,7 +2,6 @@ const http = require("http");
 const url = require("url");
 const mysql = require('mysql');
 const os = require('os');
-const _request = require('request');
 
 http.createServer(function(request, response) {
   var pathname = url.parse(request.url).pathname;
