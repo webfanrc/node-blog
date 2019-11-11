@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const os = require('os');
 
 http.createServer(function(request, response) {
+  request.setEncoding('utf8');
+
   var pathname = url.parse(request.url).pathname;
   var arg = url.parse(request.url, true).query;
   console.log('pathname: ' + pathname);
@@ -12,7 +14,7 @@ http.createServer(function(request, response) {
   console.log('x-forwarded-for: ' + request.headers['x-forwarded-for']);
   console.log('x-real-ip: ' + request.headers['x-real-ip'] + '\n');
 
-  response.setHeader("Access-Control-Allow-Origin","http://localhost:8081"); // 方便本地调试
+  response.setHeader("Access-Control-Allow-Origin","http://localhost:8081"); // 方便本地调试（vue项目的dev端口必须为8081）
   response.setHeader("Access-Control-Allow-Headers","Content-Type");
   response.writeHead(200, {'Content-Type': 'text/plain'});
 
@@ -87,6 +89,16 @@ http.createServer(function(request, response) {
     connection.query(sql, function(error, res) {
       let results = {};
       results.ipList = res;
+      if (typeof res != 'undefined') {
+        response.write(JSON.stringify(results));
+      }
+      response.end();
+    });
+  } else if (pathname == "/blog/getUserIPFormat") {
+    let sql = `select date_format(view_date, '%Y-%m-%d') date, count(*) count from ip group by date_format(view_date, '%Y-%m-%d');`;
+    connection.query(sql, function(error, res) {
+      let results = {};
+      results.ipListFormat = res;
       if (typeof res != 'undefined') {
         response.write(JSON.stringify(results));
       }
