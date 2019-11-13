@@ -10,10 +10,6 @@ http.createServer(function(request, response) {
   var arg = url.parse(request.url, true).query;
   console.log('pathname: ' + pathname);
 
-  console.log('remoteAddress: ' + request.connection.remoteAddress);
-  console.log('x-forwarded-for: ' + request.headers['x-forwarded-for']);
-  console.log('x-real-ip: ' + request.headers['x-real-ip'] + '\n');
-
   response.setHeader("Access-Control-Allow-Origin","http://localhost:8081"); // 方便本地调试（vue项目的dev端口必须为8081）
   response.setHeader("Access-Control-Allow-Headers","Content-Type");
   response.writeHead(200, {'Content-Type': 'text/plain'});
@@ -26,11 +22,11 @@ http.createServer(function(request, response) {
   });
   connection.connect();
 
-  if (pathname == "/blog/") {
+  if (pathname == "/blog/") { // 获取文章列表以及用户IP todo: 分成两个接口
 
     let yourOS = os.platform();
     let yourHost = os.hostname();
-    let yourIP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+    let yourIP = request.headers['x-forwarded-for'] || request.connection.remoteAddress; //需要在nginx上进行配置
 
     console.log(yourOS, yourHost, yourIP);
 
@@ -56,7 +52,7 @@ http.createServer(function(request, response) {
       response.write(JSON.stringify(results));
       response.end();
     });
-  } else if (pathname == "/blog/sendMessage") {
+  } else if (pathname == "/blog/sendMessage") { // todo: 修改为post形式
     let user_name = arg.user_name;
     let user_email = arg.user_email;
     let user_message = arg.user_message;
@@ -73,6 +69,7 @@ http.createServer(function(request, response) {
     let user_ip = arg.user_ip;
     let view_title = arg.view_title;
     let view_date = new Date();
+    console.log(new Date());
 
     connection.query('INSERT INTO ip SET ?', {
       user_ip: user_ip,
