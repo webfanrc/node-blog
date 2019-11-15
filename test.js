@@ -69,7 +69,6 @@ http.createServer(function(request, response) {
     let user_ip = arg.user_ip;
     let view_title = arg.view_title;
     let view_date = new Date();
-    console.log(new Date());
 
     connection.query('INSERT INTO ip SET ?', {
       user_ip: user_ip,
@@ -81,6 +80,28 @@ http.createServer(function(request, response) {
       }
       response.end();
     })
+  } else if (pathname == "/blog/ipFilter") { // 判断这个ip今天是否访问过这个页面，如果是则返回true，不是则返回false
+    let user_ip = arg.user_ip;
+    let view_title = arg.view_title;
+    let view_date = new Date();
+
+    let formate_view_date = view_date.getFullYear() + '-' + (view_date.getMonth() + 1) + '-' + view_date.getDate();
+
+    let sql = `select * from ip where user_ip='${user_ip}' and view_title='${view_title}' and date_format(view_date, '%Y-%m-%d')='${formate_view_date}'`;
+
+    console.log(sql);
+    connection.query(sql, function(error, res) {
+      console.log(res);
+      if (typeof res != 'undefined') {
+        if (res.length != 0) {
+          response.write('true');
+        } else {
+          response.write('false');
+        }
+      }
+      response.end();
+    })
+
   } else if (pathname == "/blog/getUserIP") {
     let sql = 'select * from ip order by view_date DESC';
     connection.query(sql, function(error, res) {
