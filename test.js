@@ -53,18 +53,31 @@ http.createServer(function(request, response) {
       response.end();
     });
   } else if (pathname == "/blog/sendMessage") { // todo: 修改为post形式
-    let user_name = arg.user_name;
-    let user_email = arg.user_email;
-    let user_message = arg.user_message;
-    let sql = `insert into message(user_name, user_email, user_message) values('${user_name}', '${user_email}', '${user_message}')`;
+    console.log(arg);
+    let sql = `INSERT INTO message (user_message, user_name, user_email, user_website, send_date, message_for) 
+    values
+    ('${arg.user_message}', '${arg.user_name}', '${arg.user_email}', '${arg.user_website}', NOW(), '${arg.message_for}')`;
 
-    connection.query(sql, function(error, results) {
-      console.log('results of /sendMessage: ' + results);
-      if (typeof results != 'undefined') {
-        response.write(JSON.stringify(results));
+    // console.log(sql);
+    connection.query(sql, function(err, res) {
+      // console.log(res);
+      if (typeof res != "undefined") {
+        response.write(JSON.stringify(res));
+      } else {
+        response.write(JSON.stringify(0));
       }
       response.end();
     });
+  } else if (pathname == "/blog/getMessages") {
+    let sql = `select id, user_name, user_message, user_website, DATE_FORMAT(send_date, \'%Y-%m-%d %H:%i:%s\') as date from message where message_for='${arg.message_for}'`;
+    console.log(sql);
+    connection.query(sql, function(error, res) {
+      if (typeof res != 'undefined') {
+        response.write(JSON.stringify(res));
+      }
+      response.end();
+    });
+
   } else if (pathname == "/blog/ipAddress") {
     let user_ip = arg.user_ip;
     let view_title = arg.view_title;
@@ -75,7 +88,8 @@ http.createServer(function(request, response) {
       view_title: view_title,
       view_date: view_date,
     }, function(error, results) {
-      if (typeof results != undefined) {
+      console.log(typeof results);
+      if (typeof results != 'undefined') {
         response.write(JSON.stringify(results));
       }
       response.end();
@@ -89,9 +103,7 @@ http.createServer(function(request, response) {
 
     let sql = `select * from ip where user_ip='${user_ip}' and view_title='${view_title}' and date_format(view_date, '%Y-%m-%d')='${formate_view_date}'`;
 
-    console.log(sql);
     connection.query(sql, function(error, res) {
-      console.log(res);
       if (typeof res != 'undefined') {
         if (res.length != 0) {
           response.write('true');
@@ -122,6 +134,17 @@ http.createServer(function(request, response) {
       }
       response.end();
     });
+  } else if (pathname == "/blog/getArticleFormat") {
+    let sql = `select date_format(create_date, '%Y-%m') as date, count(*) as count from blog group by date ORDER BY date;`;
+    connection.query(sql, function(error, res) {
+      let results = {};
+      results.articleListFormat = res;
+      if (typeof res != 'undefined') {
+        response.write(JSON.stringify(results));
+      }
+      response.end();
+    });
+
   }
 
 }).listen(8888);

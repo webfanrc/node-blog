@@ -7,5 +7,8 @@ CREATE TABLE `message` (
   `user_name` TEXT(21845),
   `user_email` TEXT(21845),
   `user_message` TEXT(21845),
+  `user_website` TEXT(21845),
+  `message_for` TEXT(28145),
+  `send_date` DATETIME,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
