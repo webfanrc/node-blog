@@ -4,7 +4,7 @@ var path = require('path');
 var md = new markdown();
 
 
-const PATH = "./posts";
+const PATH = "./new";
 let files = fs.readdirSync(PATH);
 let final_output = 'SET NAMES utf8;\n' +
   'SET FOREIGN_KEY_CHECKS = 0;' +
