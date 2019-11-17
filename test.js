@@ -22,28 +22,25 @@ http.createServer(function(request, response) {
   });
   connection.connect();
 
-  if (pathname == "/blog/") { // 获取文章列表以及用户IP todo: 分成两个接口
-
-    let yourOS = os.platform();
-    let yourHost = os.hostname();
-    let yourIP = request.headers['x-forwarded-for'] || request.connection.remoteAddress; //需要在nginx上进行配置
-
-    console.log(yourOS, yourHost, yourIP);
-
-    let sql = 'select * from blog order by create_date DESC';
+  if (pathname == "/blog/") { // 获取文章列表
+    let sql = 'select id, title, DATE_FORMAT(create_date, \'%Y年%m月%d日\') as date from blog order by create_date DESC';
     connection.query(sql, function(error, res) {
       let results = {};
       results.blogList = res;
-
-      results.yourOS = yourOS;
-      results.yourHost = yourHost;
-      results.yourIP = yourIP;
 
       if (typeof res != 'undefined') {
         response.write(JSON.stringify(results));
       }
       response.end();
     });
+  } else if (pathname == "/blog/getUserIP") { // 获取用户IP
+    let yourIP = request.headers['x-forwarded-for'] || request.connection.remoteAddress; //需要在nginx上进行配置
+
+    let results = {};
+
+    results.userIP = yourIP;
+    response.write(JSON.stringify(results));
+    response.end();
   } else if (pathname == "/blog/detail") {
     var title = arg.title;
     var sql = `select * from blog where title = '${title}'`;
