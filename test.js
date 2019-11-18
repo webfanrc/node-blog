@@ -53,9 +53,9 @@ http.createServer(function(request, response) {
     console.log(arg);
     let sql = `INSERT INTO message (user_message, user_name, user_email, user_website, send_date, message_for) 
     values
-    ('${arg.user_message}', '${arg.user_name}', '${arg.user_email}', '${arg.user_website}', NOW(), '${arg.message_for}')`;
+    (${connection.escape(arg.user_message)}, ${connection.escape(arg.user_name)}, ${connection.escape(arg.user_email)}, ${connection.escape(arg.user_website)}, NOW(), ${connection.escape(arg.message_for)})`;
 
-    // console.log(sql);
+    console.log(sql);
     connection.query(sql, function(err, res) {
       // console.log(res);
       if (typeof res != "undefined") {
@@ -111,7 +111,7 @@ http.createServer(function(request, response) {
       response.end();
     })
 
-  } else if (pathname == "/blog/getUserIP") {
+  } else if (pathname == "/blog/getUserIPList") {
     let sql = 'select * from ip order by view_date DESC';
     connection.query(sql, function(error, res) {
       let results = {};
