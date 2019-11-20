@@ -1,7 +1,7 @@
 const http = require("http");
 const url = require("url");
 const mysql = require('mysql');
-const os = require('os');
+const querystring = require('querystring');
 
 http.createServer(function(request, response) {
   request.setEncoding('utf8');
@@ -141,7 +141,25 @@ http.createServer(function(request, response) {
       }
       response.end();
     });
+  } else if (pathname == "/blog/updateBlogContent") {
+    let post = '';
 
+    request.on('data', function(chunk){
+      post += chunk;
+    });
+
+    request.on('end', function(){
+
+      if (post != '') { //？？？？？？
+        let userData = JSON.parse(post);
+        connection.query(`UPDATE blog SET ? where id=${userData.id}`, {
+          content: userData.blog_content,
+        }, function(res) {
+        })
+      }
+    });
+
+    response.end();
   }
 
 }).listen(8888);
