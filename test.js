@@ -1,7 +1,10 @@
 const http = require("http");
 const url = require("url");
 const mysql = require('mysql');
-const querystring = require('querystring');
+const crypto = require('crypto');
+
+const UpdateArticleSecret = "a80bfa6001b769ce9689d4208ff2840e21cecde470a7dc109407ae0b0e57821c";
+
 
 http.createServer(function(request, response) {
   request.setEncoding('utf8');
@@ -150,12 +153,18 @@ http.createServer(function(request, response) {
 
     request.on('end', function(){
 
-      if (post != '') { //？？？？？？
+      if (post != '') {
         let userData = JSON.parse(post);
-        connection.query(`UPDATE blog SET ? where id=${userData.id}`, {
-          content: userData.blog_content,
-        }, function(res) {
-        })
+        const secret = userData.passport;
+        const hash = crypto.createHmac('sha256', secret).digest('hex');
+        if (hash == UpdateArticleSecret) {
+          connection.query(`UPDATE blog SET ? where id=${userData.id}`, {
+            content: userData.blog_content,
+          }, function(res) {
+          })
+        } else {
+          console.log('fail');
+        }
       }
     });
 

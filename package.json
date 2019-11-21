@@ -1,0 +1,24 @@
+{
+  "name": "node-blog",
+  "version": "1.3.0",
+  "description": "",
+  "main": "test.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ip": "^1.1.5",
+    "markdown-it": "^10.0.0",
+    "mysql": "^2.17.1",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RuoChen95/node-blog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RuoChen95/node-blog/issues"
+  },
+  "homepage": "https://github.com/RuoChen95/node-blog#readme"
+}
