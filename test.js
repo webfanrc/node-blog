@@ -99,7 +99,15 @@ http.createServer(function(request, response) {
     let view_title = arg.view_title;
     let view_date = new Date();
 
-    let formate_view_date = view_date.getFullYear() + '-' + (view_date.getMonth() + 1) + '-' + view_date.getDate();
+    let date = "";
+
+    if (view_date.getDate() < 10) {
+      date = '0' + view_date.getDate();
+    } else {
+      date = view_date.getDate();
+    }
+
+    let formate_view_date = view_date.getFullYear() + '-' + (view_date.getMonth() + 1) + '-' + date;
 
     let sql = `select * from ip where user_ip='${user_ip}' and view_title='${view_title}' and date_format(view_date, '%Y-%m-%d')='${formate_view_date}'`;
 
