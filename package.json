@@ -8,9 +8,12 @@
     "ip": "^1.1.5",
     "markdown-it": "^10.0.0",
     "mysql": "^2.17.1",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "util": "^0.12.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RuoChen95/node-blog.git"

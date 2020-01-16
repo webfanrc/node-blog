@@ -2,6 +2,7 @@ const http = require("http");
 const url = require("url");
 const mysql = require('mysql');
 const crypto = require('crypto');
+const fs = require("fs");
 
 const UpdateArticleSecret = "a80bfa6001b769ce9689d4208ff2840e21cecde470a7dc109407ae0b0e57821c";
 
@@ -15,7 +16,8 @@ http.createServer(function(request, response) {
 
   response.setHeader("Access-Control-Allow-Origin","http://localhost:8081"); // 方便本地调试（vue项目的dev端口必须为8081）
   response.setHeader("Access-Control-Allow-Headers","Content-Type");
-  response.writeHead(200, {'Content-Type': 'text/plain'});
+  // response.writeHead(200, {'Content-Type': 'text/plain'});
+
 
   var connection = mysql.createConnection({
     host: 'localhost',
@@ -177,6 +179,21 @@ http.createServer(function(request, response) {
     });
 
     response.end();
+  } else if (pathname == "/blog/PS") {
+    var files = fs.createReadStream(__dirname + "/attachments/PS-Xie+Ruochen.pages");
+    response.writeHead(200, {'Content-disposition': 'attachment; filename=PS-Xie+Ruochen.pages'});
+    files.pipe(response);
+  } else if (pathname == "/blog/getMessageList") {
+    let sql = "select * from message order by send_date LIMIT 5";
+
+    connection.query(sql, function(error, res) {
+      let results = {};
+      results.articleListFormat = res;
+      if (typeof res != 'undefined') {
+        response.write(JSON.stringify(results));
+      }
+      response.end();
+    });
   }
 
 }).listen(8888);
